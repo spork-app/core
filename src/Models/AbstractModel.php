@@ -1,6 +1,6 @@
 <?php
 
-namespace Spork\Models;
+namespace Spork\Core\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Kregel\LaravelAbstract\AbstractEloquentModel;
