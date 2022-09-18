@@ -23,5 +23,4 @@ class TestCase extends TestbenchTestCase
             SporkServiceProvider::class,
         ];
     }
-
 }

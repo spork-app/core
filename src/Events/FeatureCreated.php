@@ -2,12 +2,12 @@
 
 namespace Spork\Core\Events;
 
-use Spork\Core\Models\FeatureList;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Spork\Core\Models\FeatureList;
 
 class FeatureCreated implements ShouldBroadcast
 {

@@ -4,19 +4,18 @@ namespace Spork\Core\Models;
 
 use App\Models\User;
 use Closure;
-use Spork\Core\Events\FeatureCreated;
-use Spork\Core\Events\FeatureDeleted;
-use Spork\Core\Events\FeatureUpdated;
-use Spork\Core\Spork;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Validation\Rule;
 use Kregel\LaravelAbstract\AbstractEloquentModel;
 use Kregel\LaravelAbstract\AbstractModelTrait;
 use Spatie\Tags\HasTags;
+use Spork\Core\Events\FeatureCreated;
+use Spork\Core\Events\FeatureDeleted;
+use Spork\Core\Events\FeatureUpdated;
+use Spork\Core\Spork;
 
 /**
  * Class FeatureList
@@ -84,7 +83,7 @@ class FeatureList extends Model implements AbstractEloquentModel
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'feature_list_users', )->withPivot(['role']);
+        return $this->belongsToMany(User::class, 'feature_list_users')->withPivot(['role']);
     }
 
     public static function forFeature(string $feature): Builder
@@ -157,13 +156,13 @@ class FeatureList extends Model implements AbstractEloquentModel
     {
         if (isset($this::$extendedRelations[$method])) {
             $function = $this::$extendedRelations[$method];
-            
+
             return Closure::bind($function, $this)(...$parameters);
         }
 
         return parent::__call($method, $parameters);
     }
-    
+
     public static function extend(string $methodName, callable $closure)
     {
         static::$extendedRelations[$methodName] = $closure;

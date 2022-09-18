@@ -27,7 +27,7 @@ class SporkTest extends TestCase
                 'enabled' => false,
                 'group' => 'default',
                 'provides' => [],
-            ]
+            ],
         ], Spork::$features);
     }
 
@@ -41,6 +41,7 @@ class SporkTest extends TestCase
         Spork::loadWith(['world']);
         $this->assertSame(['hello', 'world'], Spork::$loadWith);
     }
+
     public function testPublish()
     {
         Event::fake();

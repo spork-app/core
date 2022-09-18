@@ -2,17 +2,17 @@
 
 namespace Spork\Core;
 
-use Spork\Core\Events\Spork\ActionRegistered;
-use Spork\Core\Events\Spork\AssetPublished;
-use Spork\Core\Events\Spork\FeatureRegistered;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Spork\Core\Events\Spork\ActionRegistered;
+use Spork\Core\Events\Spork\AssetPublished;
+use Spork\Core\Events\Spork\FeatureRegistered;
 
 class Spork
 {
     use Macroable;
-    
+
     public static $assets = [
         'css' => [],
         'js' => [],
@@ -112,8 +112,9 @@ class Spork
         return isset(self::$features[$slug]) && self::$features[$slug]['enabled'];
     }
 
-    public static function fabricateWith ($componentPath) {
-        if (!is_array($componentPath)) {
+    public static function fabricateWith($componentPath)
+    {
+        if (! is_array($componentPath)) {
             $componentPath = [$componentPath];
         }
         $components = [];
@@ -122,14 +123,13 @@ class Spork
             foreach ($paths as $newPath) {
                 preg_match('/export default {(.*\n)+}/', file_get_contents($fullPath = $path.'/'.$newPath), $matches);
 
-                $script = escapeshellarg(str_replace('export default ', 'console.log(JSON.stringify(', $matches[0]). '));');
-            
-                exec("node -e ".$script, $output, $code);
-                
+                $script = escapeshellarg(str_replace('export default ', 'console.log(JSON.stringify(', $matches[0]).'));');
+
+                exec('node -e '.$script, $output, $code);
+
                 $component = json_decode($output[0] ?? '{}', true);
 
                 $components[$fullPath] = $component;
-                
             }
         }
         self::$components = array_merge(self::$components, $components);
