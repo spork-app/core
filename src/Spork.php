@@ -5,6 +5,7 @@ namespace Spork\Core;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Spork\Core\Contracts\ActionInterface;
 use Spork\Core\Events\Spork\ActionRegistered;
 use Spork\Core\Events\Spork\AssetPublished;
 use Spork\Core\Events\Spork\FeatureRegistered;
@@ -27,6 +28,19 @@ class Spork
     public static $loadWith = [];
 
     public const NO_NEW_FEATURES = [];
+
+    // This method should only be called in tests
+    public static function reset()
+    {
+        static::$assets = [
+            'css' => [],
+            'js' => [],
+        ];
+        static::$features = [];
+        static::$actions = [];
+        static::$components = [];
+        static::$loadWith = [];
+    }
 
     public static function addFeature(string $featureName, string $icon, string $path, string $group = 'default', array $availableFeatures = [])
     {
@@ -71,29 +85,26 @@ class Spork
         foreach (glob($path.'/*.php') as $file) {
             $contents = file_get_contents($file);
 
-            $basename = basename($file, '.php');
-
-            if ($basename === 'ActionInterface') {
-                continue;
-            }
-
-            if (stripos($contents, 'class '.$basename) === false) {
-                continue;
-            }
+            $basename = str_replace('.php', '', basename($file));
 
             preg_match('/namespace\s+(.*);/', $contents, $matches);
 
             $class = $matches[1].'\\'.$basename;
 
+
             $instance = new $class;
+            if (! ($instance instanceof ActionInterface)) {
+                continue;
+            }
 
             $action = [
-                'name' => $instance->getName(),
-                'url' => $instance->getUrl(),
+                'name' => $instance->name(),
+                'url' => $instance->route(),
                 'tags' => $instance->tags(),
             ];
+
             $actions[$feature][] = $action;
-            Route::post($instance->getUrl(), $class);
+            Route::post($instance->route(), $class);
             event(new ActionRegistered($feature, $action));
         }
 
@@ -110,29 +121,6 @@ class Spork
         $slug = Str::slug($featureName);
 
         return isset(self::$features[$slug]) && self::$features[$slug]['enabled'];
-    }
-
-    public static function fabricateWith($componentPath)
-    {
-        if (! is_array($componentPath)) {
-            $componentPath = [$componentPath];
-        }
-        $components = [];
-        foreach ($componentPath as $path) {
-            $paths = array_filter(scandir($path), fn ($path) => in_array($path, ['.', '..']) === false);
-            foreach ($paths as $newPath) {
-                preg_match('/export default {(.*\n)+}/', file_get_contents($fullPath = $path.'/'.$newPath), $matches);
-
-                $script = escapeshellarg(str_replace('export default ', 'console.log(JSON.stringify(', $matches[0]).'));');
-
-                exec('node -e '.$script, $output, $code);
-
-                $component = json_decode($output[0] ?? '{}', true);
-
-                $components[$fullPath] = $component;
-            }
-        }
-        self::$components = array_merge(self::$components, $components);
     }
 
     public static function provides(): array

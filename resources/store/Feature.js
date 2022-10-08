@@ -72,7 +72,7 @@ export default {
             state.queryOptions = {
                 filter, feature, ...options,
             }
-            const { data } = await axios.get(buildUrl('/api/feature-list', {
+            const { data } = await axios.get(buildUrl('/api/core/feature-lists', {
                 filter: {
                     ...filter,
                     ...(feature ? { feature } : { }),

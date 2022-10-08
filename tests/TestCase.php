@@ -13,7 +13,7 @@ class TestCase extends TestbenchTestCase
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Kregel\\Core\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Spork\\Core\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 

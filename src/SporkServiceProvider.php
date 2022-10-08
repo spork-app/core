@@ -9,15 +9,20 @@ class SporkServiceProvider extends RouteServiceProvider
 {
     public function boot()
     {
-      //
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/spork-core.php' => config_path('spork-core.php'),
+            ], 'config');
+        }
     }
 
     public function register()
     {
-        Spork::addFeature('core', 'ViewBoardsIcon', '/core');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->mergeConfigFrom(__DIR__.'/../config/spork-core.php', 'spork.core');
 
-        if (config('spork.core.enabled')) {
-            Route::middleware($this->app->make('config')->get('spork.core.middleware', ['auth:sanctum']))
+        if ($this->app->make('config')->get('spork.core.enabled', true)) {
+            Route::middleware($this->app->make('config')->get('spork.core.middleware'))
                 ->prefix('api/core')
                 ->group(__DIR__.'/../routes/web.php');
         }

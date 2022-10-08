@@ -17,11 +17,7 @@ use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
 use Spork\Core\Spork;
 
-/**
- * Class FeatureList
- *
- * @mixin Model
- */
+
 class FeatureList extends Model implements AbstractEloquentModel
 {
     use HasFactory, HasTags, AbstractModelTrait;
@@ -31,6 +27,9 @@ class FeatureList extends Model implements AbstractEloquentModel
     protected $fillable = [
         'name',
         'feature',
+        // Settings are different from normal properties. Settings should be assumed to be nullable
+        // so values that are required for something to exist (like the dollar amount of a transaction)
+        // should go on a dedicated model.
         'settings',
     ];
 
@@ -63,27 +62,16 @@ class FeatureList extends Model implements AbstractEloquentModel
         static::deleted(function ($item) {
             event(new FeatureDeleted($item));
         });
-
-        static::addGlobalScope('user', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            $builder->where('user_id', auth()->id())
-                ->orWhereHas('users', function (Builder $builder) {
-                    $builder->where('user_id', auth()->id());
-                });
-        });
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(config('spork-core.models.user'));
     }
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'feature_list_users')->withPivot(['role']);
+        return $this->belongsToMany(config('spork-core.models.user'), 'feature_list_users')->withPivot(['role']);
     }
 
     public static function forFeature(string $feature): Builder
@@ -102,8 +90,6 @@ class FeatureList extends Model implements AbstractEloquentModel
                 Rule::in(Spork::provides()),
             ],
             'settings' => 'nullable|array',
-            'settings.body' => 'nullable|string',
-            'settings.links' => 'array|min:0',
         ];
     }
 
@@ -124,7 +110,7 @@ class FeatureList extends Model implements AbstractEloquentModel
 
     public function getAbstractAllowedRelationships(): array
     {
-        return ['repeatable.users.user', 'notes', 'accounts', 'conditionals'];
+        return [];
     }
 
     public function getAbstractAllowedSorts(): array
