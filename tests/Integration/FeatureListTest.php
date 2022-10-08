@@ -2,7 +2,6 @@
 
 namespace Spork\Core\Tests\Integration;
 
-use Illuminate\Support\Facades\Event;
 use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
@@ -20,7 +19,7 @@ class FeatureListTest extends TestCase
         parent::setUp();
         FeatureList::$extendedRelations = [];
     }
-    
+
     public function testFeatureCreatedEventIsLaunched()
     {
         $this->expectsEvents([
@@ -50,14 +49,14 @@ class FeatureListTest extends TestCase
     }
 
     public function testFeatureUsersCanShareAccess()
-    {   
+    {
         $feature = FeatureList::factory()->create([
             'feature' => 'core',
         ]);
 
         $response = $this->postJson('api/core/share', [
             'feature_list_id' => $feature->id,
-            'email' => 'user@fake.tools'
+            'email' => 'user@fake.tools',
         ]);
 
         $response->assertStatus(204);

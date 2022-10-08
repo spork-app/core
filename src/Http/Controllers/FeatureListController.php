@@ -14,12 +14,13 @@ class FeatureListController
         $featureListId = $shareRequest->get('feature_list_id');
 
         $featureList = config('spork-core.models.feature_list');
-        
+
         dd($featureListId, $shareRequest->validated());
+
         return $featureList::findOrFail($featureListId);
     }
 
-    public function index() 
+    public function index()
     {
         return QueryBuilder::for(FeatureList::class)
             ->allowedIncludes(Spork::$loadWith)

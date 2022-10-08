@@ -2,7 +2,6 @@
 
 namespace Spork\Core\Models;
 
-use App\Models\User;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +15,6 @@ use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
 use Spork\Core\Spork;
-
 
 class FeatureList extends Model implements AbstractEloquentModel
 {

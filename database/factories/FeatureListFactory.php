@@ -3,7 +3,6 @@
 namespace Spork\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use Spork\Core\Models\FeatureList;
 
 class FeatureListFactory extends Factory
@@ -29,6 +28,7 @@ class FeatureListFactory extends Factory
         ];
 
         $userModel = config('spork-core.models.user');
+
         return [
             'name' => $this->faker->name(),
             'feature' => $features[array_rand($features, 1)],

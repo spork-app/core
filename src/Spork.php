@@ -91,7 +91,6 @@ class Spork
 
             $class = $matches[1].'\\'.$basename;
 
-
             $instance = new $class;
             if (! ($instance instanceof ActionInterface)) {
                 continue;

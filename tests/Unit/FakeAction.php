@@ -2,7 +2,6 @@
 
 namespace Spork\Core\Tests\Unit;
 
-use Illuminate\Validation\Validator;
 use Spork\Core\Contracts\ActionInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -36,7 +35,7 @@ class FakeAction implements ActionInterface
     public function __invoke(): JsonResponse
     {
         return response()->json([
-            'message' => 'Hello'
+            'message' => 'Hello',
         ]);
     }
 }

@@ -11,7 +11,7 @@ use Spork\Core\Tests\TestCase;
 
 class SporkTest extends TestCase
 {
-    public function setUp(): void 
+    public function setUp(): void
     {
         parent::setUp();
         Spork::reset();
@@ -58,7 +58,7 @@ class SporkTest extends TestCase
                 'slug' => 'core',
                 'icon' => 'icon',
                 'path' => '/path',
-                'enabled' =>false,
+                'enabled' => false,
                 'group' => 'default',
                 'provides' => [],
             ],
@@ -122,9 +122,9 @@ class SporkTest extends TestCase
                 [
                     'name' => 'Fake Action',
                     'url' => '/api/route-app',
-                    'tags' => []
-                ]
-            ]
+                    'tags' => [],
+                ],
+            ],
         ], Spork::$actions);
     }
 
@@ -141,13 +141,13 @@ class SporkTest extends TestCase
                 [
                     'name' => 'Fake Action',
                     'url' => '/api/route-app',
-                    'tags' => []
-                ]
-            ]
+                    'tags' => [],
+                ],
+            ],
         ], Spork::$actions);
 
         $response = $this->postJson('/api/route-app', [
-            
+
         ]);
 
         $response->assertStatus(200);

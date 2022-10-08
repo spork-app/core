@@ -9,5 +9,5 @@ return [
     'models' => [
         'feature_list' => FeatureList::class,
         'user' => User::class,
-    ]
+    ],
 ];
