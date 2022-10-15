@@ -12,6 +12,4 @@ interface ActionInterface
     public function route(): string;
 
     public function tags(): array;
-
-    public function validation(array $rules): void;
 }

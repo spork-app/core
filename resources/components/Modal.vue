@@ -1,7 +1,7 @@
 <!-- This example requires Tailwind CSS v2.0+ -->
 <template>
   <TransitionRoot as="template" :show="open">
-    <Dialog as="div" class="relative z-40" @close="open = false">
+    <Dialog as="div" class="relative z-40" @close="$emit('close')">
       <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-slate-800 bg-opacity-75 transition-opacity" />
       </TransitionChild>
@@ -29,18 +29,13 @@ export default {
     components: {
         Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot
     },
+    props: ['open'],
+    emits: [],
     data() {
         return {
-            open: false,
         }
     },
     methods: {
-        show() {
-            this.open = true
-        },
-        hide() {
-            this.open = false
-        }
     }
 }
 </script>

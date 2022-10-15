@@ -48,7 +48,11 @@
                                         <option v-for="action in actions" :key="action" :value="action">{{ action.name }} ({{ selectedItems.length }})</option>
                                     </select>
 
-                                    <button type="button" @click.prevent="$emit('execute', { selectedItems, actionToRun })">
+                                    <button type="button" @click.prevent="() => {
+                                        Spork.toast('Running action... Please wait a moment.', 'info');
+                                        $emit('execute', { selectedItems, actionToRun })
+                                        selectedItems = [];
+                                    }">
                                         <play-icon class="w-6 h-6 stroke-current" />
                                     </button>
                                 </div>
@@ -99,9 +103,9 @@
                         <div class="flex flex-col border-t border-slate-200 mt-2 pt-4">
                             <slot name="form"></slot>
                             <div class="mt-4 flex justify-end">
-                                <SporkButton @click.prevent="() => {
-                                    $emit('save', form);
-                                    createOpen = false;
+                                <SporkButton @click.prevent="async () => {
+                                        $emit('save', form);
+                                        createOpen = false;
                                     }"
                                     primary
                                     medium
@@ -175,6 +179,7 @@ export default {
             selectedItems: ref([]),
             itemsPerPage: ref(15),
             actionToRun: ref(null),
+            Spork
         }
     },
     computed: {
