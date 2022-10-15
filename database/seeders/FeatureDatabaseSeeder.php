@@ -18,7 +18,7 @@ class FeatureDatabaseSeeder extends Seeder
         FeatureList::factory()->create([
             'feature' => 'core',
             'settings' => [],
-            'name' => 'Core Feature'
+            'name' => 'Core Feature',
         ]);
     }
 }
