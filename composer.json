@@ -47,7 +47,7 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "homepage": "https://github.com/spork-app/conditions",
+    "homepage": "https://github.com/spork-app/core",
     "keywords": [
         "spork-plugins"
     ]
