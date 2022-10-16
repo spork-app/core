@@ -2,6 +2,7 @@
 
 namespace Spork\Core\Tests\Integration;
 
+use Illuminate\Support\Facades\Event;
 use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
@@ -18,53 +19,90 @@ class FeatureListTest extends TestCase
     {
         parent::setUp();
         FeatureList::$extendedRelations = [];
+        config([
+            'spork.core.models.user' => TestUser::class,
+        ]);
     }
 
     public function testFeatureCreatedEventIsLaunched()
     {
-        $this->expectsEvents([
-            FeatureCreated::class,
-            FeatureUpdated::class,
-            FeatureDeleted::class,
-        ]);
-        $feature = FeatureList::factory()->create([
+        Event::fake();
+        $user = TestUser::factory()->create();
+
+        $this->actingAs($user)->postJson('/api/core/feature-list', [
+            'name' => 'Test feature',
             'feature' => 'core',
+            'settings' => [],
         ]);
 
-        $feature->update(['name' => 'Hello world']);
+        $this->actingAs($user)->putJson('/api/core/feature-list/1', [
+            'name' => 'A feature',
+        ]);
 
-        $feature->delete();
+        $this->actingAs($user)->deleteJson('/api/core/feature-list/1');
+
+        Event::assertDispatched(FeatureCreated::class);
+        Event::assertDispatched(FeatureUpdated::class);
+        Event::assertDispatched(FeatureDeleted::class);
     }
 
     public function testFeatureCreatedStoresUserIfLoggedIn()
     {
-        auth()->login($user = TestUser::factory()->create());
-        $feature = FeatureList::factory()->create([
-            'feature' => 'core',
-        ]);
-        auth()->logout();
+        $user = TestUser::factory()->create();
 
-        $this->assertNotNull($user->id);
-        $this->assertSame($user->id, $feature->user->id);
+        $response = $this->actingAs($user)->postJson('/api/core/feature-list', [
+            'name' => 'Test feature',
+            'feature' => 'core',
+            'settings' => [],
+        ]);
+
+        $response->assertStatus(201);
+        $response->assertJsonFragment([
+            'user_id' => $user->id,
+        ]);
     }
 
-    public function testFeatureUsersCanShareAccess()
+    public function testFeatureUsersCantShareAccessIfUserDoestExist()
     {
+        $user = TestUser::factory()->create();
         $feature = FeatureList::factory()->create([
             'feature' => 'core',
+            'user_id' => $user->id,
         ]);
-
-        $response = $this->postJson('api/core/share', [
+        $response = $this->actingAs($user)->postJson('api/core/share', [
             'feature_list_id' => $feature->id,
             'email' => 'user@fake.tools',
         ]);
 
-        $response->assertStatus(204);
+        $response->assertStatus(412);
+    }
+
+    public function testFeatureUsersCanShareAccess()
+    {
+        $user = TestUser::factory()->create();
+        $userToShareWith = TestUser::factory()->create([
+            'email' => 'user@fake.tools',
+        ]);
+        $feature = FeatureList::factory()->create([
+            'feature' => 'core',
+            'user_id' => $user->id,
+        ]);
+        $response = $this->actingAs($user)->postJson('api/core/share', [
+            'feature_list_id' => $feature->id,
+            'email' => 'user@fake.tools',
+        ]);
+
+        $response->assertStatus(200);
+
+        $this->assertSame([
+
+        ], $userToShareWith->features()->get()->toArray());
     }
 
     public function testExtendingForDynamicRelationshipsWork()
     {
-        FeatureList::extend('featureUsers', fn () => $this->belongsToMany(config('spork-core.models.user'), 'feature_list_users', 'feature_list_id', 'user_id'));
+        FeatureList::extend('featureUsers', fn () => $this->belongsToMany(TestUser::class, 'feature_list_users', 'feature_list_id', 'user_id'));
+
         $feature = FeatureList::factory()->create([
             'feature' => 'core',
         ]);

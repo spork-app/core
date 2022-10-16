@@ -11,9 +11,6 @@ use Illuminate\Validation\Rule;
 use Kregel\LaravelAbstract\AbstractEloquentModel;
 use Kregel\LaravelAbstract\AbstractModelTrait;
 use Spatie\Tags\HasTags;
-use Spork\Core\Events\FeatureCreated;
-use Spork\Core\Events\FeatureDeleted;
-use Spork\Core\Events\FeatureUpdated;
 use Spork\Core\Spork;
 
 class FeatureList extends Model implements AbstractEloquentModel
@@ -39,37 +36,14 @@ class FeatureList extends Model implements AbstractEloquentModel
 
     protected $hidden = [];
 
-    protected static function booted()
-    {
-        parent::booted();
-
-        static::creating(function ($item) {
-            if (auth()->check()) {
-                $item->user_id = auth()->id();
-            }
-        });
-
-        static::created(function ($item) {
-            event(new FeatureCreated($item));
-        });
-
-        static::updated(function ($item) {
-            event(new FeatureUpdated($item));
-        });
-
-        static::deleted(function ($item) {
-            event(new FeatureDeleted($item));
-        });
-    }
-
     public function user()
     {
-        return $this->belongsTo(config('spork-core.models.user'));
+        return $this->belongsTo(config('spork.core.models.user'));
     }
 
     public function users()
     {
-        return $this->belongsToMany(config('spork-core.models.user'), 'feature_list_users')->withPivot(['role']);
+        return $this->belongsToMany(config('spork.core.models.user'), 'feature_list_users', 'feature_list_id', 'user_id', 'id')->withPivot(['role']);
     }
 
     public static function forFeature(string $feature): Builder

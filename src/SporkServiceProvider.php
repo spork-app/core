@@ -11,7 +11,7 @@ class SporkServiceProvider extends RouteServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/spork-core.php' => config_path('spork-core.php'),
+                __DIR__.'/../config/spork.core.php' => config_path('spork.core.php'),
             ], 'config');
         }
     }

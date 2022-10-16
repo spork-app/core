@@ -2,20 +2,29 @@
 
 namespace Spork\Core\Http\Requests;
 
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Http\FormRequest;
+use Spork\Core\Models\FeatureList;
 
-class ShareRequest extends Request
+class ShareRequest extends FormRequest
 {
     public function authorize()
     {
-        return false;
+        // Maybe verify the person making the request owns the feature list?
+        $featureListModel = config('spork.core.models.feature_list', FeatureList::class);
+
+        $featureList = $featureListModel::findOrFail($this->get('feature_list_id'));
+
+        return $featureList->user_id === auth()->id();
     }
 
     public function rules()
     {
         return [
             'email' => 'required',
-            'feature_list_id' => 'required,exists:'.config('spork-app.models.feature_list').',id',
+            'feature_list_id' => [
+                'required',
+                'exists:'.config('spork.core.models.feature_list', FeatureList::class).',id',
+            ],
         ];
     }
 }

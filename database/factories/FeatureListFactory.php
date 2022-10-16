@@ -27,7 +27,7 @@ class FeatureListFactory extends Factory
             'finance',
         ];
 
-        $userModel = config('spork-core.models.user');
+        $userModel = config('spork.core.models.user');
 
         return [
             'name' => $this->faker->name(),

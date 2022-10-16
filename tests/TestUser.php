@@ -5,6 +5,7 @@ namespace Spork\Core\Tests;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spork\Core\Models\FeatureList;
 
 class TestUser extends Authenticatable
 {
@@ -34,6 +35,6 @@ class TestUser extends Authenticatable
 
     public function features()
     {
-        return $this->hasMany(FeatureList::class);
+        return $this->hasMany(FeatureList::class, 'user_id', 'id');
     }
 }
