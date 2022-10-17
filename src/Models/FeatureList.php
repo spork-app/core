@@ -55,13 +55,7 @@ class FeatureList extends Model implements AbstractEloquentModel
     public function getValidationCreateRules(): array
     {
         return [
-            'name' => 'required|string',
-            'feature' => [
-                'required',
-                'string',
-                Rule::in(Spork::provides()),
-            ],
-            'settings' => 'nullable|array',
+
         ];
     }
 
