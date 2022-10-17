@@ -126,6 +126,6 @@ class Spork
     {
         return array_reduce(static::$features, function ($provides, $feature) {
             return array_merge($provides, $feature['provides'] ?? []);
-        }, []);
+        }, ['core']);
     }
 }

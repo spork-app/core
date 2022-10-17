@@ -8,8 +8,10 @@ use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
 use Spork\Core\Http\Requests\ShareRequest;
 use Spork\Core\Http\Requests\StoreRequest;
+use Spork\Core\Http\Requests\UpdateRequest;
 use Spork\Core\Models\FeatureList;
 use Spork\Core\Spork;
+use Illuminate\Http\Request;
 
 class FeatureListController
 {
@@ -55,16 +57,25 @@ class FeatureListController
         return response()->json($createdFeature, 201);
     }
 
-    public function update(StoreRequest $request, FeatureList $featureList)
+    public function update(UpdateRequest $request, $featureList)
     {
+        $featureList = FeatureList::findOrFail($featureList);
+
+        abort_unless($featureList->user_id === $request->user()->id, 401);
+
         $featureList->update($request->validated());
+
         event(new FeatureUpdated($featureList));
 
         return response()->json($featureList, 200);
     }
 
-    public function destroy(FeatureList $featureList)
+    public function destroy(Request $request, $featureList)
     {
+        $featureList = FeatureList::findOrFail($featureList);
+       
+        abort_unless($featureList->user_id === $request->user()->id, 401);
+
         $featureList->delete();
         event(new FeatureDeleted($featureList));
 

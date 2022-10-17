@@ -29,17 +29,22 @@ class FeatureListTest extends TestCase
         Event::fake();
         $user = TestUser::factory()->create();
 
-        $this->actingAs($user)->postJson('/api/core/feature-list', [
+        $response = $this->actingAs($user)->postJson('/api/core/feature-list', [
             'name' => 'Test feature',
             'feature' => 'core',
             'settings' => [],
         ]);
 
-        $this->actingAs($user)->putJson('/api/core/feature-list/1', [
+        $response->assertStatus(201);
+        $featureId = $response->getData()->id;
+        $response2 = $this->actingAs($user)->putJson('/api/core/feature-list/' . $featureId, [
             'name' => 'A feature',
         ]);
+        $response2->assertStatus(200);
 
-        $this->actingAs($user)->deleteJson('/api/core/feature-list/1');
+        $this->withoutExceptionHandling();
+        $response3 = $this->actingAs($user)->deleteJson('/api/core/feature-list/' . $featureId);
+        $response3->assertStatus(204);
 
         Event::assertDispatched(FeatureCreated::class);
         Event::assertDispatched(FeatureUpdated::class);

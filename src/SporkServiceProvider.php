@@ -2,6 +2,7 @@
 
 namespace Spork\Core;
 
+use Spork\Core\Models\FeatureList;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 

@@ -20,16 +20,16 @@ class SporkTest extends TestCase
     public function testAddFeatureFiresFeatureRegisteredEvent()
     {
         Event::fake();
-        Config::set('spork.core.enabled', true);
+        Config::set('spork.cores.enabled', true);
 
-        Spork::addFeature('core', 'icon', '/path', 'default', []);
+        Spork::addFeature('cores', 'icon', '/path', 'default', []);
 
         Event::assertDispatched(FeatureRegistered::class);
 
         $this->assertSame([
-            'core' => [
-                'name' => 'Core',
-                'slug' => 'core',
+            'cores' => [
+                'name' => 'Cores',
+                'slug' => 'cores',
                 'icon' => 'icon',
                 'path' => '/path',
                 'enabled' => true,
@@ -38,9 +38,9 @@ class SporkTest extends TestCase
             ],
         ], Spork::$features);
 
-        $this->assertSame([], Spork::provides());
+        $this->assertSame(['core'], Spork::provides());
 
-        $this->assertTrue(Spork::hasFeature('core'));
+        $this->assertTrue(Spork::hasFeature('cores'));
     }
 
     public function testDoesntMakeFeatureAvailable()
@@ -48,14 +48,14 @@ class SporkTest extends TestCase
         Event::fake();
         Config::set('spork.core.enabled', false);
 
-        Spork::addFeature('core', 'icon', '/path', 'default', []);
+        Spork::addFeature('cores', 'icon', '/path', 'default', []);
 
         Event::assertDispatched(FeatureRegistered::class);
 
         $this->assertSame([
-            'core' => [
-                'name' => 'Core',
-                'slug' => 'core',
+            'cores' => [
+                'name' => 'Cores',
+                'slug' => 'cores',
                 'icon' => 'icon',
                 'path' => '/path',
                 'enabled' => false,
@@ -64,9 +64,9 @@ class SporkTest extends TestCase
             ],
         ], Spork::$features);
 
-        $this->assertSame([], Spork::provides());
+        $this->assertSame(['core'], Spork::provides());
 
-        $this->assertFalse(Spork::hasFeature('core'));
+        $this->assertFalse(Spork::hasFeature('cores'));
     }
 
     public function testLoadWithAddsAsitGetsCalledAndWontDuplicateValues()
