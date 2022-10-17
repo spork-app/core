@@ -16,11 +16,13 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => [
+            'name' => 'required|string',
+            'feature' => [
                 'required',
+                'string',
+                Rule::in(Spork::provides()),
             ],
-            'feature' => Rule::in(array_keys(Spork::$features) + ['core']),
-            'settings' => 'array',
+            'settings' => 'nullable|array',
         ];
     }
 }
