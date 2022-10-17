@@ -7,4 +7,4 @@ use Spork\Core\Http\Controllers\FeatureListController;
 
 Route::apiResource('feature-list', FeatureListController::class);
 
-Route::post('/share', [FeatureListController::class, 'share']);
+Route::post('/share', [FeatureListController::class, 'share'])->name('feature-list.share');
