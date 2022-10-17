@@ -37,13 +37,13 @@ class FeatureListTest extends TestCase
 
         $response->assertStatus(201);
         $featureId = $response->getData()->id;
-        $response2 = $this->actingAs($user)->putJson('/api/core/feature-list/' . $featureId, [
+        $response2 = $this->actingAs($user)->putJson('/api/core/feature-list/'.$featureId, [
             'name' => 'A feature',
         ]);
         $response2->assertStatus(200);
 
         $this->withoutExceptionHandling();
-        $response3 = $this->actingAs($user)->deleteJson('/api/core/feature-list/' . $featureId);
+        $response3 = $this->actingAs($user)->deleteJson('/api/core/feature-list/'.$featureId);
         $response3->assertStatus(204);
 
         Event::assertDispatched(FeatureCreated::class);

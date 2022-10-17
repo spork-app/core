@@ -2,6 +2,7 @@
 
 namespace Spork\Core\Http\Controllers;
 
+use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
@@ -11,7 +12,6 @@ use Spork\Core\Http\Requests\StoreRequest;
 use Spork\Core\Http\Requests\UpdateRequest;
 use Spork\Core\Models\FeatureList;
 use Spork\Core\Spork;
-use Illuminate\Http\Request;
 
 class FeatureListController
 {
@@ -73,7 +73,7 @@ class FeatureListController
     public function destroy(Request $request, $featureList)
     {
         $featureList = FeatureList::findOrFail($featureList);
-       
+
         abort_unless($featureList->user_id === $request->user()->id, 401);
 
         $featureList->delete();
