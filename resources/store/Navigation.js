@@ -13,7 +13,6 @@ export default {
     state: {
         hideRootNav: Spork.getLocalStorage('hideRootNav', false),
     },
-
     getters: {
         navigation: (state) => Object.values(Features).filter(feature => feature.enabled).map(route => ({
             name: route.name,

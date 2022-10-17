@@ -10,125 +10,47 @@
                 <!-- This element is to trick the browser into centering the modal contents. -->
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
-                <div class="inline-block align-bottom bg-white dark:bg-gray-600 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-                    <div>
-                        <div  v-if="feature === 'research'">
-                            <div class="text-left">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-50" id="modal-title">
-                                    Research Topic
-                                </h3>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.name" placeholder="Topic of study..." type="text"/>
-                                </div>
-                            </div>    
-                        </div>
+                <div class="inline-block align-bottom bg-white dark:bg-gray-600 rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
 
-                        <div v-if="feature === 'budgets'">
-                            <div class="">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-slate-50" id="modal-title">
-                                    Name
-                                </h3>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.name" placeholder="Subscriptions" type="text" />
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-slate-50" id="modal-title">
-                                    Amount
-                                </h3>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.settings.amount" placeholder="100.50" type="text" />
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-slate-50" id="modal-title">
-                                    Expected spends? (optional)
-                                </h3>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.settings.expected_spends" placeholder="99.57" type="text" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div  v-if="feature === 'development'" class="flex flex-col gap-2">
-                            <div class="text-left">
-                                <label for="country" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Project Name</label>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.name" placeholder="Greenhouse" type="text"/>
-                                </div>
-                            </div>
-                            <div class="text-left">
-                                <label for="country" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Project Path</label>
-                                <div class="mt-2">
-                                    <spork-input v-model="form.settings.path" placeholder="/home/john/src/project-name" type="text"/>
-                                </div>
-                            </div>    
-
-                            <div>
-                                <label for="country" class="block text-sm font-medium text-gray-700 dark:text-slate-200">Template</label>
-                                <select v-model="form.settings.template" id="country" name="country" autocomplete="country-name" class="mt-1 block w-full bg-white dark:bg-slate-500 dark:border-gray-500 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                    <option v-for="template in templates" :key="template.src" :value="template">{{template.name}}</option>
-                                </select>
-                            </div>
-                            <div class="text-left mt-2">
-                                <label for="use_git" class="flex items-center -ml-4 block text-sm font-medium text-gray-700 dark:text-slate-200">
-                                    <spork-input v-model="form.settings.use_git" type="checkbox"/>
-                                    <div class="ml-6">Initialize git afterwords</div>
-                                </label>
-                            </div>    
-
-                        </div>
-
-                        <div v-if="feature === 'calendar'">
-                            <div class="flex flex-wrap border border-slate-200 dark:border-slate-500 rounded divide-y divide-slate-200 dark:divide-slate-500">
-                                <div class="w-full flex">
-                                    <div class="py-2 px-4 w-2/3">All-Day</div>
-                                    <div class="py-2 px-4 w-1/3 text-right">
-                                        <toggle-input v-model="form.settings.all_day"/>
-                                    </div>
-                                </div>
-                                <div class="w-full flex divide-x divide-slate-200 dark:divide-slate-500">
-                                    <div class="py-2 px-4 w-2/3">21 October, 2022</div>
-                                    <div class="py-2 px-4 w-1/3 text-right">9:45 AM</div>
-                                </div>
-                                <div class="w-full flex divide-x divide-slate-200 dark:divide-slate-500">
-                                    <div class="py-2 px-4 w-2/3">21 October, 2022</div>
-                                    <div class="py-2 px-4 w-1/3 text-right">9:45 AM</div>
-                                </div>
-                                <div class="w-full flex justify-between">
-                                    <div class="py-2 px-4 ">Repeats</div>
-                                    <div class="py-2 px-4 ">Doesn't Repeat</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="feature === 'servers'">
-                                <div class="text-sm italic border-b border-gray-200 dark:border-slate-800 dark:bg-slate-700 p-4 bg-gray-100">as root</div>
-                                <div class="p-4">
-                                    <div class="leading-normal">
-                                        Install options
-                                        <div class="w-full flex flex-col items-center mt-2">
-                                            <label class="w-full flex flex-wrap items-center gap-6">
-                                                <input type="checkbox" :disabled="form.settings.metrics" v-model="form.settings.install_node" /> <span>Install Node LTS v16</span>
-                                            </label>
-                                            <label class="w-full flex flex-wrap items-center gap-6">
-                                                <input type="checkbox" v-model="form.settings.metrics" /> <span>Install Wiretap monitor</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <code><pre class="bg-gray-100 overflow-scroll border-gray-300 dark:bg-slate-900 dark:border-slate-600 text-xs p-2 my-4 border">curl "{{ realUrl }}" | sudo bash</pre></code>
-                                    <div class="mt-4">
-                                        This will link the server that it's being ran on to your account. It will only install node or metrics if they're checked.
-                                    </div>
-                            </div>
+                    <div class="">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-slate-50" id="modal-title">
+                            Name
+                        </h3>
+                        <div class="mt-2">
+                            <spork-input v-model="form.name" placeholder="Subscriptions" type="text" ref="name" />
                         </div>
                     </div>
+                    <div v-for="(setting, index) in extraFields" :key="'setting-'+ index" class="flex items-end gap-2 w-full bg-gray-600">
+                        <SporkDynamicInput class="mt-2 w-full" v-model="extraFields[index]" :type="extraFields[index]?.type ?? 'text'" />
+                        <button class="mb-2" @click="() => extraFields = extraFields.filter((v, i) => i !== index)"><TrashIcon class="w-5 h-5 text-red-500 fill-current"></TrashIcon></button>
+                    </div>
+
+                    <Menu as="div" class="relative inline-block text-left">
+                        <div>
+                          <MenuButton class="mt-4 inline-flex w-full justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-500 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+                                <PlusCircleIcon class="w-5 h-5"></PlusCircleIcon>
+                                <span>Add new field</span>
+                                <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
+                          </MenuButton>
+                        </div>
+                    
+                        <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+                          <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-500 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                            <div class="py-1">
+                                <MenuItem v-slot="{ active }" v-for="extraField in supportedFields" :key="extraField">
+                                  <SporkDropDownItem :active="active" :icon="extraField.icon" :text="extraField.name" @click="extraField.onClick"/>
+                                </MenuItem>
+                            </div>
+                          </MenuItems>
+                        </transition>
+                      </Menu>
+
                     <div v-for="(item, key) in $store.getters.featureErrors" :key="key">
                         <div v-for="error in item" :key="error" class="text-red-500">{{ error  }}</div>
                     </div>
                     <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                        <button 
-                            @click="createFeature"
+                        <button
+                            @click.prevent="saveForm"
                             type="button"
                             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
                         >
@@ -150,66 +72,113 @@
 
 <script>
 import { ref } from 'vue';
+import { PlusCircleIcon } from '@heroicons/vue/outline';
+import {
+  ArrowCircleRightIcon,
+  ChevronDownIcon,
+  CheckIcon,
+  DocumentTextIcon,
+CalendarIcon
+} from '@heroicons/vue/solid'
 
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
+import SporkDropDownItem from './SporkDropDownItem.vue';
+import SporkDynamicInput from './SporkDynamicInput.vue';
 export default {
-    props: ['feature', 'allowMoreThanOne'],
+    components: {
+    PlusCircleIcon,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuItems,
+    ArrowCircleRightIcon,
+    ChevronDownIcon,
+    SporkDropDownItem,
+    SporkDynamicInput
+
+},
+    props: ['feature', 'allowMoreThanOne', 'settings'],
     computed: {
         actualFeature() {
             return this.$store.getters.features[this.feature]
         },
-    
-        realUrl() {
-            return buildUrl('https://localhost/basement/link-server', {
-                token: 'abAafaeaDbAAFF8f8184==',
-                install_node: this.form.settings?.install_node,
-                metrics: this.form.settings?.metrics,
-            });
-        },
+    },
+    watch: {
+        '$store.getters.openResearch' (newV) {
+            if (newV) {
+                setTimeout(() => {
+                   this.$refs.name.focus()
+                }, 150)
+            }
+        }
     },
     methods: {
-        async createFeature() {
+        async createFeature(form) {
             await this.$store.dispatch('createFeature', {
-                ...this.form,
+                ...form,
                 feature: this.feature,
             })
             this.$store.commit('setOpenResearch', false)
             this.$store.dispatch('fetchFeatures');
         },
+        saveForm() {
+            this.form.settings = this.extraFields.reduce((fields,field) => ({
+                ...fields,
+                [field.name]: field.value
+            }), {});
+
+            this.createFeature(this.form);
+        }
+    },
+    mounted() {
+        this.extraFields = Object.keys(this.settings).map(setting => ({
+            name: setting,
+            value: this.settings[setting],
+        }));
     },
 
     data() {
         return {
-            serverToken: '',
+            name: null,
             form: {
                 name: '',
                 settings: {
-                    path: '',
-                    template: '',
+
                 }
             },
-
-            // Development Feature
-            templates: [
+            extraFields: [],
+            supportedFields: [
                 {
-                    name: 'Spork Plugin',
-                    // If it's a file path that exists, we'll copy from there, if it's a URL or git repo, we'll download it
-                    src: 'https://github.com/spork-app/template-plugin/archive/main.zip',
+                    name: 'Text',
+                    icon: DocumentTextIcon,
+                    onClick: () => this.extraFields.push({
+                        name: 'text',
+                        value: '',
+                        type: 'text'
+                    })
+                    
                 },
-                
                 {
-                    name: 'Laravel App',
-                    // If it's a file path that exists, we'll copy from there, if it's a URL or git repo, we'll download it
-                    src: 'https://github.com/laravel/laravel/archive/master.zip',
+                    name: 'Toggle',
+                    icon: CheckIcon,
+                    onClick: () => this.extraFields.push({
+                        name: 'toggle',
+                        value: true,
+                        type: 'checkbox'
+                    })
                 },
-                
-            ]
+                {
+                    name: 'Date',
+                    icon: CalendarIcon,
+                    onClick: () => this.extraFields.push({
+                        name: 'date',
+                        value: null,
+                        type: 'date'
+                    })
+                },
+            ], 
+            console
         }
     },
-
-    setup() {
-        return {
-            open: ref(false),
-        }
-    }
 }
 </script>

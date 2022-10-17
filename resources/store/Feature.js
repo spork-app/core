@@ -72,7 +72,7 @@ export default {
             state.queryOptions = {
                 filter, feature, ...options,
             }
-            const { data } = await axios.get(buildUrl('/api/core/feature-lists', {
+            const { data } = await axios.get(buildUrl('/api/core/feature-list', {
                 filter: {
                     ...filter,
                     ...(feature ? { feature } : { }),
@@ -94,7 +94,7 @@ export default {
         async createFeature({ commit, state, dispatch }, feature) {
             try { 
                 state.loading = true;
-                const { data } = await axios.post('/api/feature-list', feature);
+                const { data } = await axios.post('/api/core/feature-list', feature);
                 state.features.push(data);
                 commit('setOpenResearch', false);
 
@@ -110,7 +110,7 @@ export default {
         async updateFeature({ commit, state, dispatch }, feature) {
             try { 
                 state.loading = true;
-                const { data } = await axios.put('/api/feature-list/'+feature.id, feature);
+                const { data } = await axios.put('/api/core/feature-list/'+feature.id, feature);
                 state.features = state.features.map(feature => {
                     if (feature.id === data.id) {
                         return {
@@ -130,7 +130,7 @@ export default {
         async deleteFeature({ commit, state, dispatch }, feature) {
             try { 
                 state.loading = true;
-                await axios.delete('/api/feature-list/'+feature.id);
+                await axios.delete('/api/core/feature-list/'+feature.id);
                 state.features = state.features.filter(feature => feature.id !== feature.id);
 
                 dispatch('getFeatureLists', state.queryOptions);
@@ -145,10 +145,12 @@ export default {
                 state.loading = false;
             }
         },
+
         async shareFeature({ commit, state, dispatch }, { feature, email }) {
             try { 
                 state.loading = true;
-                await axios.post('/api/feature-list/'+feature.id+'/share', { email });
+                await axios.post('/api/core/share', { email, feature_list_id: feature.id });
+                Spork.toast('I\'ve sent an invite to ')
             } catch (error) {
                 state.errors = error.response.data.errors;
             } finally {
@@ -159,7 +161,6 @@ export default {
             // actionToRun,
             // selectedItems,
             await axios.post(url, data);
-
         }
     },
     

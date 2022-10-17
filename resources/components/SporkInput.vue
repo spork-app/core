@@ -4,13 +4,17 @@
         :value="modelValue" 
         @input="$emit('update:modelValue', $event.target.value)" 
         ref="input"
+        :type="type"
     />
 
 </template>
 
 <script>
 export default {
-    props: ['modelValue'],
+    props: [
+        'modelValue',
+        'type'
+    ],
     emits: ['update:modelValue'],
     methods: {
         focus() {
