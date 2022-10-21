@@ -130,7 +130,7 @@ class Spork
 
     public static function features()
     {
-        return array_map(fn($feature) => array_merge($feature, [
+        return array_map(fn ($feature) => array_merge($feature, [
             'enabled' => config('spork.'.Str::lower($feature['slug']).'.enabled', false),
         ]), static::$features);
     }
