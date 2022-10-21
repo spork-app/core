@@ -12,14 +12,17 @@ const mapCurrentRoute = (fullPath, item) => {
 export default {
     state: {
         hideRootNav: Spork.getLocalStorage('hideRootNav', false),
+        Features,
     },
     getters: {
-        navigation: (state) => Object.values(Features).filter(feature => feature.enabled).map(route => ({
-            name: route.name,
-            icon: route.icon,
-            href: route.path,
-            group: route.group,
-        })).map((item) => mapCurrentRoute(Spork.router.currentRoute._value.fullPath, item))
+        navigation: (state) => Object.values(state.Features)
+            .filter(feature => feature.enabled)
+            .map(route => ({
+                name: route.name,
+                icon: route.icon,
+                href: route.path,
+                group: route.group,
+            })).map((item) => mapCurrentRoute(Spork.router.currentRoute._value.fullPath, item))
         .sort((a, b) => a.group < b.group ? -1 : 1)
         .reduce((acc, item) => {
             return {

@@ -49,7 +49,6 @@ class Spork
             'slug' => Str::slug($featureName),
             'icon' => $icon,
             'path' => $path,
-            'enabled' => config('spork.'.Str::slug($featureName).'.enabled', false),
             'group' => $group,
             'provides' => $availableFeatures,
         ];
@@ -127,5 +126,12 @@ class Spork
         return array_reduce(static::$features, function ($provides, $feature) {
             return array_merge($provides, $feature['provides'] ?? []);
         }, ['core']);
+    }
+
+    public static function features()
+    {
+        return array_map(fn($feature) => array_merge($feature, [
+            'enabled' => config('spork.'.Str::lower($feature['slug']).'.enabled', false),
+        ]), static::$features);
     }
 }

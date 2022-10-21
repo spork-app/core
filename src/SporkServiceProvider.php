@@ -18,13 +18,14 @@ class SporkServiceProvider extends RouteServiceProvider
 
     public function register()
     {
+
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->mergeConfigFrom(__DIR__.'/../config/spork-core.php', 'spork.core');
 
-        if ($this->app->make('config')->get('spork.core.enabled', true)) {
+        if ($this->app->make('config')->get('spork.core.enabled', false)) {
             Route::middleware($this->app->make('config')->get('spork.core.middleware'))
-                ->prefix('api/core')
-                ->group(__DIR__.'/../routes/web.php');
+            ->prefix('/api/core')
+            ->group(__DIR__.'/../routes/web.php');
         }
     }
 }

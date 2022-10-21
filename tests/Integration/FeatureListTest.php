@@ -20,6 +20,7 @@ class FeatureListTest extends TestCase
         parent::setUp();
         FeatureList::$extendedRelations = [];
         config([
+            'spork.core.enabled' => true,
             'spork.core.models.user' => TestUser::class,
         ]);
     }
@@ -42,7 +43,6 @@ class FeatureListTest extends TestCase
         ]);
         $response2->assertStatus(200);
 
-        $this->withoutExceptionHandling();
         $response3 = $this->actingAs($user)->deleteJson('/api/core/feature-list/'.$featureId);
         $response3->assertStatus(204);
 
