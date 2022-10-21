@@ -5,7 +5,7 @@ use Spork\Core\Models\FeatureList;
 
 return [
     'enabled' => true,
-    'middleware' => [],
+    'middleware' => ['api'],
     'models' => [
         'feature_list' => FeatureList::class,
         'user' => User::class,
