@@ -19,7 +19,7 @@ class SporkServiceProvider extends RouteServiceProvider
     public function register()
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->mergeConfigFrom(__DIR__.'/../config/spork-core.php', 'spork.core');
+        $this->mergeConfigFrom(__DIR__.'/../config/spork.core.php', 'spork.core');
 
         if ($this->app->make('config')->get('spork.core.enabled', false)) {
             Route::middleware($this->app->make('config')->get('spork.core.middleware'))
