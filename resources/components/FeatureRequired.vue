@@ -131,7 +131,7 @@ export default {
         }
     },
     mounted() {
-        this.extraFields = Object.keys(this.settings).map(setting => ({
+        this.extraFields = Object.keys(this.settings ?? []).map(setting => ({
             name: setting,
             value: this.settings[setting],
         }));
