@@ -6,12 +6,9 @@
         <div v-if="$store.getters.openResearch" class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                 <div class="fixed inset-0 bg-gray-900 opacity-75 transition-opacity" aria-hidden="true"></div>
-
                 <!-- This element is to trick the browser into centering the modal contents. -->
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            
                 <div class="inline-block align-bottom bg-white dark:bg-gray-600 rounded-lg px-4 pt-5 pb-4 text-left shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-
                     <div class="">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-slate-50" id="modal-title">
                             Name
@@ -20,11 +17,10 @@
                             <spork-input v-model="form.name" placeholder="Subscriptions" type="text" ref="name" />
                         </div>
                     </div>
-                    <div v-for="(setting, index) in extraFields" :key="'setting-'+ index" class="flex items-end gap-2 w-full bg-gray-600">
+                    <div v-for="(setting, index) in extraFields" :key="'setting-'+ index" class="flex items-end gap-2 w-full bg-gray-600 rounded-full">
                         <SporkDynamicInput class="mt-2 w-full" v-model="extraFields[index]" :type="extraFields[index]?.type ?? 'text'" />
                         <button class="mb-2" @click="() => extraFields = extraFields.filter((v, i) => i !== index)"><TrashIcon class="w-5 h-5 text-red-500 fill-current"></TrashIcon></button>
                     </div>
-
                     <Menu as="div" class="relative inline-block text-left">
                         <div>
                           <MenuButton class="mt-4 inline-flex w-full justify-center gap-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-500 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
@@ -33,7 +29,6 @@
                                 <ChevronDownIcon class="h-5 w-5" aria-hidden="true" />
                           </MenuButton>
                         </div>
-                    
                         <transition enter-active-class="transition ease-out duration-100" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
                           <MenuItems class="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-500 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div class="py-1">
@@ -44,7 +39,6 @@
                           </MenuItems>
                         </transition>
                       </Menu>
-
                     <div v-for="(item, key) in $store.getters.featureErrors" :key="key">
                         <div v-for="error in item" :key="error" class="text-red-500">{{ error  }}</div>
                     </div>
@@ -56,9 +50,9 @@
                         >
                             Create {{ feature }}
                         </button>
-                        <button 
+                        <button
                             @click=" $store.commit('setOpenResearch', false)"
-                            type="button" 
+                            type="button"
                             class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
                         >
                             Cancel
@@ -74,11 +68,11 @@
 import { ref } from 'vue';
 import { PlusCircleIcon } from '@heroicons/vue/outline';
 import {
-  ArrowCircleRightIcon,
-  ChevronDownIcon,
-  CheckIcon,
-  DocumentTextIcon,
-CalendarIcon
+    ArrowCircleRightIcon,
+    ChevronDownIcon,
+    CheckIcon,
+    DocumentTextIcon,
+    CalendarIcon,
 } from '@heroicons/vue/solid'
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
@@ -86,17 +80,17 @@ import SporkDropDownItem from './SporkDropDownItem.vue';
 import SporkDynamicInput from './SporkDynamicInput.vue';
 export default {
     components: {
-    PlusCircleIcon,
-    Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-    ArrowCircleRightIcon,
-    ChevronDownIcon,
-    SporkDropDownItem,
-    SporkDynamicInput
+        PlusCircleIcon,
+        Menu,
+        MenuButton,
+        MenuItem,
+        MenuItems,
+        ArrowCircleRightIcon,
+        ChevronDownIcon,
+        SporkDropDownItem,
+        SporkDynamicInput
 
-},
+    },
     props: ['feature', 'allowMoreThanOne', 'settings'],
     computed: {
         actualFeature() {
@@ -128,15 +122,36 @@ export default {
             }), {});
 
             this.createFeature(this.form);
+        },
+        getTypeFromValue(setting, value) {
+            if (Array.isArray(value)) {
+                return 'select';
+            }
+
+            if (setting.includes('date')) {
+                return 'date';
+            }
+
+            if (typeof value === 'object') {
+                if (value.hasOwnProperty('toDateString')) {
+                    return 'date';
+                }
+            }
+
+            if (!isNaN(value) || setting.endsWith('_id')) {
+                return 'number'
+            }
+
+            return 'text';
         }
     },
     mounted() {
         this.extraFields = Object.keys(this.settings ?? []).map(setting => ({
             name: setting,
             value: this.settings[setting],
+            type: this.getTypeFromValue(setting, this.settings[setting]),
         }));
     },
-
     data() {
         return {
             name: null,
@@ -156,7 +171,6 @@ export default {
                         value: '',
                         type: 'text'
                     })
-                    
                 },
                 {
                     name: 'Toggle',
@@ -176,7 +190,7 @@ export default {
                         type: 'date'
                     })
                 },
-            ], 
+            ],
             console
         }
     },
