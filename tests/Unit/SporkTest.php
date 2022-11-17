@@ -32,11 +32,11 @@ class SporkTest extends TestCase
                 'slug' => 'cores',
                 'icon' => 'icon',
                 'path' => '/path',
-                'enabled' => true,
                 'group' => 'default',
                 'provides' => [],
+                'enabled' => true,
             ],
-        ], Spork::$features);
+        ], Spork::features());
 
         $this->assertSame(['core'], Spork::provides());
 
@@ -58,11 +58,11 @@ class SporkTest extends TestCase
                 'slug' => 'cores',
                 'icon' => 'icon',
                 'path' => '/path',
-                'enabled' => false,
                 'group' => 'default',
                 'provides' => [],
+                'enabled' => false,
             ],
-        ], Spork::$features);
+        ], Spork::features());
 
         $this->assertSame(['core'], Spork::provides());
 

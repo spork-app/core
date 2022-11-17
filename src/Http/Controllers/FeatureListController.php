@@ -4,6 +4,7 @@ namespace Spork\Core\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
@@ -17,14 +18,17 @@ class FeatureListController
 {
     public function share(ShareRequest $shareRequest, FeatureList $featureList)
     {
-        $featureListId = $shareRequest->get('feature_list_id');
+        $featureListId = $shareRequest->get('feature_list_id', null);
 
-        $featureListModel = config('spork.core.models.feature_list');
+        $featureListModel = config('spork.core.models.feature_list', null);
 
         /** @var FeatureList $listInQuestion */
         $listInQuestion = $featureListModel::findOrFail($featureListId);
 
-        $userModel = config('spork.core.models.user');
+        abort_unless($listInQuestion->user_id === $shareRequest->user()->id, 401);
+
+
+        $userModel = config('spork.core.models.user', null);
 
         $user = $userModel::firstWhere('email', $shareRequest->get('email'));
 
@@ -43,9 +47,25 @@ class FeatureListController
     public function index()
     {
         return QueryBuilder::for(FeatureList::class)
-            ->allowedIncludes(Spork::$loadWith)
-            ->allowedFilters([])
-            ->paginate();
+            ->allowedFields('id', 'feature', 'name', 'settings', 'user_id', 'users', 'user')
+            ->allowedFilters([
+                AllowedFilter::exact('feature')
+            ])
+            ->allowedIncludes(...array_merge(Spork::loadWith(), ['users', 'user']))
+            ->where(function ($query) {
+                $query->whereHas('users', function ($query) {
+                    // If the user exists for this feature's relation, include it.
+                    $query->where('user_id', auth()->id());
+                    // thought: If we want to restrict viewership to roles that might be done here.
+                })
+                ->orWhere('user_id', auth()->id());
+            })
+            ->paginate(
+                request('limit', 15),
+                ['*'],
+                'page',
+                request('page', 1)
+            );
     }
 
     public function store(StoreRequest $request)
@@ -61,6 +81,7 @@ class FeatureListController
     {
         $featureList = FeatureList::findOrFail($featureList);
 
+        // Only the owner of the resource can do anything with it.
         abort_unless($featureList->user_id === $request->user()->id, 401);
 
         $featureList->update($request->validated());
@@ -73,7 +94,7 @@ class FeatureListController
     public function destroy(Request $request, $featureList)
     {
         $featureList = FeatureList::findOrFail($featureList);
-
+        // Only the owner of the resource can do anything with it.
         abort_unless($featureList->user_id === $request->user()->id, 401);
 
         $featureList->delete();

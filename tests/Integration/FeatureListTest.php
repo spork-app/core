@@ -121,4 +121,84 @@ class FeatureListTest extends TestCase
         $this->assertSame($feature->id, $featureWithUsers->id);
         $this->assertCount(1, $featureWithUsers->featureUsers);
     }
+
+    public function testWeOnlyReturnFeaturesThatWeHaveAccessTo()
+    {
+        $user = TestUser::factory()->create();
+        $user2 = TestUser::factory()->create([
+            'email' => 'user@fake.tools'
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/api/core/feature-list', [
+            'name' => 'Test feature',
+            'feature' => 'core',
+            'settings' => [],
+        ]);
+
+        $response->assertStatus(201);
+
+        $response = $this->actingAs($user2)->getJson('/api/core/feature-list');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(0, 'data');
+
+        $response = $this->actingAs($user)->postJson('/api/core/share', [
+            'feature_list_id' => FeatureList::first()->id,
+            'email' => $user2->email,
+        ]);
+        $response->assertStatus(200);
+
+        $response = $this->actingAs($user2)->getJson('/api/core/feature-list');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+    }
+
+    public function testCanReturnSpecificFeatureIfUsingParams()
+    {
+        $user = TestUser::factory()->create();
+        FeatureList::factory()->create([
+            'feature' => 'core',
+            'user_id' => $user->id,
+        ]);
+        $expectedFeatureList = FeatureList::factory()->create([
+            'feature' => 'news',
+            'user_id' => $user->id,
+        ]);
+        FeatureList::factory()->create([
+            'feature' => 'rss',
+            'user_id' => $user->id,
+        ]);
+        FeatureList::factory()->create([
+            'feature' => 'core',
+            'user_id' => $user->id,
+        ]);
+        $response = $this->actingAs($user)->getJson('/api/core/feature-list?filter[feature]=news');
+
+        $response->assertStatus(200);
+        $response->assertJsonCount(1, 'data');
+
+        $feature = $response->json('data')[0];
+        $this->assertSame($expectedFeatureList->id, $feature['id']);
+        $this->assertSame('news', $feature['feature']);
+    }
+
+    public function testFeatureUsersCanOnlyShareAccessIfTheyOwnTheFeature()
+    {
+        $user = TestUser::factory()->create();
+        $userToShareWith = TestUser::factory()->create([
+            'email' => 'user@fake.tools',
+        ]);
+        $feature = FeatureList::factory()->create([
+            'feature' => 'core',
+            'user_id' => $user->id,
+        ]);
+        // Can I share their feature with myself? :thinking:
+        $response = $this->actingAs($userToShareWith)->postJson('api/core/share', [
+            'feature_list_id' => $feature->id,
+            'email' => 'user@fake.tools',
+        ]);
+
+        $response->assertStatus(403);
+    }
 }
