@@ -12,13 +12,10 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
         php: [8.1]
         laravel: [9.*]
         stability: [prefer-stable]
-        include:
-          - laravel: 9.*
-            testbench: 7.*
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -30,8 +27,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo, xdebug, pcov
+          coverage: clover
 
       - name: Setup problem matchers
         run: |
@@ -39,7 +36,13 @@ jobs:
           echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
-          composer update --${{ matrix.stability }} --prefer-dist --no-interaction
-      - name: Execute tests
-        run: vendor/bin/phpunit
+          composer install
+      - name: Publish Testbench
+        run: vendor/bin/testbench vendor:publish --provider="Spatie\\QueryBuilder\\QueryBuilderServiceProvider"
+
+      - uses: paambaati/codeclimate-action@v3.1.1
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: composer test
+          coverageLocations: ${{github.workspace}}/build/logs/clover.xml:clover

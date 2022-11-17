@@ -118,7 +118,7 @@ class Spork
     {
         $slug = Str::slug($featureName);
 
-        return isset(self::$features[$slug]) && self::$features[$slug]['enabled'];
+        return isset(self::features()[$slug]) && self::features()[$slug]['enabled'] ?? false;
     }
 
     public static function provides(): array
