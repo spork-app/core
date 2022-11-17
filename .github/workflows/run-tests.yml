@@ -44,7 +44,7 @@ jobs:
       - name: Publish Testbench
         run: vendor/bin/testbench vendor:publish --provider="Spatie\\QueryBuilder\\QueryBuilderServiceProvider"
 
-      - uses: paambaati/codeclimate-action@v2.2.4
+      - uses: paambaati/codeclimate-action@v3.1.1
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
