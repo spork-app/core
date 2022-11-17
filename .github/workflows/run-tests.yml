@@ -42,6 +42,7 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
       - name: Publish Testbench
-        run: vendor/bin/testbench vendor:publish --provider=Spatie\QueryBuilder\QueryBuilderServiceProvider
+        run: vendor/bin/testbench vendor:publish --provider=Spatie\\QueryBuilder\\QueryBuilderServiceProvider
+
       - name: Execute tests
         run: vendor/bin/phpunit
