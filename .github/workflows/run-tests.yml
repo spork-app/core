@@ -8,11 +8,10 @@ on:
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}
+    runs-on: self-hosted
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-latest, macos-latest]
         php: [8.1]
         laravel: [9.*]
         stability: [prefer-stable]
