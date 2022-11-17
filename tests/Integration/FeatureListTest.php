@@ -126,7 +126,7 @@ class FeatureListTest extends TestCase
     {
         $user = TestUser::factory()->create();
         $user2 = TestUser::factory()->create([
-            'email' => 'user@fake.tools'
+            'email' => 'user@fake.tools',
         ]);
 
         $response = $this->actingAs($user)->postJson('/api/core/feature-list', [

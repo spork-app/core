@@ -3,8 +3,8 @@
 namespace Spork\Core\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 use Spork\Core\Events\FeatureCreated;
 use Spork\Core\Events\FeatureDeleted;
 use Spork\Core\Events\FeatureUpdated;
@@ -27,7 +27,6 @@ class FeatureListController
 
         abort_unless($listInQuestion->user_id === $shareRequest->user()->id, 401);
 
-
         $userModel = config('spork.core.models.user', null);
 
         $user = $userModel::firstWhere('email', $shareRequest->get('email'));
@@ -49,7 +48,7 @@ class FeatureListController
         return QueryBuilder::for(FeatureList::class)
             ->allowedFields('id', 'feature', 'name', 'settings', 'user_id', 'users', 'user')
             ->allowedFilters([
-                AllowedFilter::exact('feature')
+                AllowedFilter::exact('feature'),
             ])
             ->allowedIncludes(...array_merge(Spork::loadWith(), ['users', 'user']))
             ->where(function ($query) {
