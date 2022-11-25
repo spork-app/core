@@ -138,7 +138,7 @@ export default {
                 }
             }
 
-            if (!isNaN(value) || setting.endsWith('_id')) {
+            if ((!isNaN(value) || setting.endsWith('_id')) && value !== '') {
                 return 'number'
             }
 

@@ -1,24 +1,28 @@
+import {buildUrl} from "@kbco/query-builder";
+
 export default {
     state: {
         features: Spork.getLocalStorage('feature_data', []),
-        pagination: Spork.getLocalStorage('feature_pagination', {}),
+        corePagination: Spork.getLocalStorage('feature_pagination', {}),
         availableFeatures: [
             'research',
             'finance',
             'planning',
             'maintenance',
             'shopping',
-            'news',
             'weather',
             'property',
             'calendar',
             'greenhouse',
+            'contacts',
+            'compendium',
+            'rss',
         ],
         loading: true,
         errors: {},
         open: false,
         queryOptions: {},
-        
+
         actions: [],
         loadWith: [],
         provides: [],
@@ -84,7 +88,7 @@ export default {
             commit('setFeatureLists', data);
             setTimeout(()=> state.loading = false, 500);
         },
-        
+
         fetchFeatures({ getters, dispatch}, options){
             dispatch('getFeatureLists', {
                 include: getters.loadWith,
@@ -92,7 +96,7 @@ export default {
             })
         },
         async createFeature({ commit, state, dispatch }, feature) {
-            try { 
+            try {
                 state.loading = true;
                 const { data } = await axios.post('/api/core/feature-list', feature);
                 state.features.push(data);
@@ -108,7 +112,7 @@ export default {
             }
         },
         async updateFeature({ commit, state, dispatch }, feature) {
-            try { 
+            try {
                 state.loading = true;
                 const { data } = await axios.put('/api/core/feature-list/'+feature.id, feature);
                 state.features = state.features.map(feature => {
@@ -128,7 +132,7 @@ export default {
             }
         },
         async deleteFeature({ commit, state, dispatch }, feature) {
-            try { 
+            try {
                 state.loading = true;
                 await axios.delete('/api/core/feature-list/'+feature.id);
                 state.features = state.features.filter(feature => feature.id !== feature.id);
@@ -136,18 +140,18 @@ export default {
                 dispatch('getFeatureLists', state.queryOptions);
             } catch (error) {
                 if (error?.response?.data?.errors) {
-                    state.errors = error.response.data.errors;  
+                    state.errors = error.response.data.errors;
                 } else {
                     state.errors = [error.message]
                 }
-           
+
                 console.error(error, feature);
                 state.loading = false;
             }
         },
 
         async shareFeature({ commit, state, dispatch }, { feature, email }) {
-            try { 
+            try {
                 state.loading = true;
                 await axios.post('/api/core/share', { email, feature_list_id: feature.id });
                 Spork.toast('I\'ve sent an invite to ')
@@ -163,5 +167,5 @@ export default {
             await axios.post(url, data);
         }
     },
-    
+
 };

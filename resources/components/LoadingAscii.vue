@@ -12,51 +12,29 @@ export default {
     setup() {
         return {
             currentFrame: ref(null),
-            arts: [
-                {
-                    name: 'balloon',
-                    frames: [
-                        '.',
-                        'o',
-                        'O',
-                        '@',
-                        '*',
-                    ],
-                },
-                {
-                    name: 'bars',
-                    frames: [
-                        '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█', '▇', '▆', '▅', '▄', '▃', '▁',
-                    ],
-                },
-                {
-                    name: 'dots',
-                    frames: [
-                        '⠁', '⠂', '⠄', '⡀', '⢀', '⠠', '⠐', '⠈',
-                    ],
-                },
-                {
-                    name: 'eyes',
-                    frames: [
-                        '◡◡',
-                        '⊙⊙',
-                        '◠◠',
-                    ],
-                }
-            ],
+            newArts: require('cli-spinners/spinners.json'),
             interval: ref(null),
         }
     },
     computed: {
         currentArt() {
-            return this.arts.find(art => art.name === this.art);
+            return this.newArts[this.seed];
+        },
+        seed() {
+            if (this.art) {
+                return this.art;
+            }
+
+            const values = Object.values(this.newArts)
+            const index = (~~(values.length * Math.random()) );
+            return Object.keys(this.newArts)[index];
         }
     },
     mounted () {
         this.interval = setInterval(() => {
             const maxFrames = this.currentArt?.frames?.length
             this.currentFrame = this.currentFrame >= maxFrames - 1 ? 0 : this.currentFrame + 1
-        }, this.timeout);
+        }, this.currentArt?.interval);
     },
     beforeDestroy () {
         clearInterval(this.interval);
